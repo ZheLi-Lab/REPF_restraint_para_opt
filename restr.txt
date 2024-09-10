@@ -1,0 +1,1 @@
+Best restraint scheme is following: rec_atoms:[1498, 1496, 1490](started from 0), lig_atoms:[2499, 2498, 2487](started from 0), r:6.489235176073066, theta1:2.1040119524, theta2:1.9513946463999998, phi1:-0.3345989424000001, phi2:1.5115966382666757, phi3:0.364918551600001

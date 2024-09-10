@@ -1,0 +1,46 @@
+[normalmd]
+normalmd=False
+
+[alchemical]
+alchemical = True
+mode = normal
+lambdas_json= lambdas.json
+lambdas_group= lambda_com_21normal
+temperature = 300.0
+timestep = 2 
+nsteps = 100
+niterations = 5000
+pdbx = None
+current_group_nb = None
+current_group_chg = None
+save_traj = False
+reportstate_freq = 1000
+savetraj_freq = 5000
+input_state = None
+
+[restraint]
+restraint = True
+temperature = 300.0
+timestep = 2
+# increase temperature 50 times within 25000 timesteps (in this case, each time increase 6 Kelvin)
+heat_nsteps = 25000 
+heat_iterations = 50 
+density_nsteps = 25000 # density
+npt_nsteps = 500000 # production with plumed
+f_npt_state = npt_final_state.xml
+save_traj = True
+reportstate_freq = 1000
+save_traj_freq = 5000
+f_plumed_input = plumed.dat
+f_plumed_output = Colvar
+lambdas_json = lambdas.json
+lambdas_group = lambda_com_21normal
+fake_state_xml = fake_state.xml # for skipping the running of the state_s0, if not state_s0.xml, it will not work.
+first_state_csv = npt_state.csv
+plumed_freq = 100 # plumed record frequency
+crd = None # assigned by the openmm-FEP-run.py -c option, but you can give the coordinate file of the structure that you like for the generation of candidate groups of restraint
+top = None # assigned by the openmm-FEP-run.py -p option, but you can give the topology file of the structure that you like for the generation of candidate groups of restraint
+#f_restraint = res_databystd.csv # the file logging the six-degree-of-freedom restraint pararmeters
+
+
+
