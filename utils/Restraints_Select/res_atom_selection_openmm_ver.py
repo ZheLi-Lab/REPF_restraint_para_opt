@@ -4,11 +4,12 @@ from .Selection_by_lig_shape import Frame, Residue, Protein, Ligand, Atom, get_r
 from .Selection_by_HB_pair import Sel_rest_atm_hb_pair_based, Hb_pair_group, Speci_restr
 from .Selection_by_HB_mainchain import Sel_rest_atm_hb_mainchain_based, Hb_pair_group_mainchain, Speci_restr_mainchain
 from .Selection_by_Huggins import Sel_rest_atm
-from .Selection_by_fix_lig3atoms import fix_ligand_3atoms_based_sel
 import mdtraj as md
 import parmed as pmd
 import numpy as np
 import pandas as pd
+import ast
+import os
 class Res_atom_select():
     def __init__(self, xyz_file, top_file, plumed_input_file, plumed_output_file, plumed_cal_freq):
         '''Initializing
@@ -136,8 +137,9 @@ class Res_atom_select():
 
         ###For Test only###
         if 'Multiple' in strategy_list:
-            lst_m = [[2500, 2499, 2488, 1491, 1497, 1499]] # only for directly assign the restraint group, change the lst_m to your own restraint group
+            lst_m =self.read_restraint_group(filename="restraint_group") # only for directly assign the restraint group, change the lst_m to your own restraint group
             self.based_Multiple = lst_m
+            print(lst_m)
         else:
             lst_m = []
         ####################
@@ -153,6 +155,7 @@ class Res_atom_select():
         six_atoms+=lst_e
         six_atoms+=lst_m ###For Test only
         #deduplication
+     
         six_atoms = [list(i) for i in set(tuple(h) for h in six_atoms)]
         if iflog:
             grp_num4=len(six_atoms)
@@ -163,7 +166,7 @@ class Res_atom_select():
         self.muti_six_atm_lst = six_atoms
         gen_ = Gen_plumed_input(six_atoms)
         gen_.gen_BoreschLike_measure(self.plumed_input_file, self.plumed_output_file, self.plumed_cal_freq)
-
+    
     def gen_mbarlike_resene_csv(self, arry, lambdas, nsteps, timestep=4, sample_interval=100, output_csv_name='state_s0.csv'):
         '''
         
@@ -326,6 +329,32 @@ class Res_atom_select():
             with open(fake_state_xml, 'w') as fake_state_xml_file:
                 fake_state_xml_file.write('This is a fake first lambda state xml file.')
         return res_parm_format
+    def read_restraint_group(self,filename="restraint-atoms-group"):
+        """
+        Read the restraint atom list file customized by the user.  
+        :param filename: Name of the file containing the restraint group.
+        :return: The first list from the file, or None if file doesn't exist or is invalid.
+        """
+        if os.path.exists(filename):
+            try:
+                with open(filename, 'r') as file:
+                    content = file.read().strip()
+                     # Use ast.literal_eval to safely evaluate the string as a Python expression
+                    data = ast.literal_eval(content)
+                    result=[]
+                    if isinstance(data, list) and len(data) > 0 and isinstance(data[0], list):
+                       
+                        result.append(data[0])
+                        return result
+                        
+                    else:
+                        print(f"Warning: Invalid format in {filename}. Expected a list of lists.")
+            except Exception as e:
+                print(f"Error reading {filename}: {str(e)}")
+        else:
+            print(f"Warning: {filename} not found. Using default restraint group.")
+    
+        return None
 
 if __name__ == '__main__':
     #amber
