@@ -4,7 +4,7 @@ import json
 class REPF_para_opti():
     '''Obtain the restraint equilibrium values by reading the restraint atoms from the provided plumed.dat for the optimization of restrained degrees of freedom.
     '''
-    def init(self):
+    def init(self,plumed_input_file,plumed_output_file,plumed_record_freq,fake_state_xml,first_state_csv):
         '''
         plumed_input_file: the input file for plumed reading (for candidate restraint parameters measurement);default:plumed.dat
         plumed_output_file: the plumed output file (recording the restraint atoms and parameters) ;default:Colvar
@@ -12,11 +12,11 @@ class REPF_para_opti():
         fake_state_xml:for skipping the first state simulation in alchemical simulation;default:state_s0.xml
         first_state_csv:for restraint free energy calculation;default:state_s0.csv
         '''
-        plumed_input_file='plumed.dat'
-        plumed_output_file='Colvar'
-        plumed_record_freq=100
-        fake_state_xml=self.fake_state_xml
-        first_state_csv=self.first_state_csv
+        self.plumed_input_file='plumed.dat'
+        self.plumed_output_file='Colvar'
+        self.plumed_record_freq=100
+        self.fake_state_xml=fake_state_xml
+        self.first_state_csv=first_state_csv
     
     
     def rest_para_opti(self,plumed_input_file,plumed_output_file):
