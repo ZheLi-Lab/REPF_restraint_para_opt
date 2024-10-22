@@ -3,7 +3,7 @@ from utils.Restraints_Select import Res_atom_select, RestraintParam
 class REPF_para_opti():
     '''Obtain the restraint equilibrium values by reading the restraint atoms from the provided plumed.dat for the optimization of restrained degrees of freedom.
     '''
-    def init(self,plumed_input_file):
+    def init(self):
         '''
         plumed_input_file: the input file for plumed reading (for candidate restraint parameters measurement);default:plumed.dat
         plumed_output_file: the plumed output file (recording the restraint atoms and parameters) ;default:Colvar
