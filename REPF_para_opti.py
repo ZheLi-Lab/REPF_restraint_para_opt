@@ -25,11 +25,9 @@ class REPF_para_opti():
         opt_cost_name:The name of the optimization method used;default:RED_E_cost
         '''
         complex_coor='./example/protein.rst7'
-       
         complex_topo='./example/protein.prmtop'
-        
+        ligname = 'MOL'# the residue name of the ligan
         Restr_test =Res_atom_select(complex_coor, complex_topo, plumed_input_file, plumed_output_file, 100 )#The instantiation of the  restraint specification object.
-        ligname = 'MOL'# the residue name of the ligand 
         Restr_test.defi_rest_atoms('plumed.dat')#Read restraint atoms from plumed.dat.
         res_parm = Restr_test.aly_traj_get_best_rest('lambdas_group', 'state_s0.xml', 'state_s0.csv', 1000000,4,opt_cost_name='RED_E_cost' , if_mean=False,if_init_pose=False )
         return (res_parm)
