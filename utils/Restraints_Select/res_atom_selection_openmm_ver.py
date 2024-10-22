@@ -319,7 +319,7 @@ class Res_atom_select():
         res_parm_format = RestraintParam(rec_atoms=res_parm.rec_atoms,lig_atoms=res_parm.lig_atoms,r=res_parm.r,theta1=res_parm.theta1,theta2=res_parm.theta2,phi1=res_parm.phi1,phi2=res_parm.phi2,phi3=res_parm.phi3)
         
         output_dU = best.delta_u
-        #self.gen_mbarlike_resene_csv(output_dU, lambda_group, nsteps, timestep, self.plumed_cal_freq, first_state_csv)
+        self.gen_mbarlike_resene_csv(output_dU, lambda_group, nsteps, timestep, self.plumed_cal_freq, first_state_csv)
 
         res.generate_csv(csv_name="res_databystd.csv", lst=res.res_list_4_std_sort)
         best.draw_figure('best.png')
