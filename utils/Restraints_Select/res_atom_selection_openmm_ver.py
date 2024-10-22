@@ -9,6 +9,7 @@ import parmed as pmd
 import numpy as np
 import pandas as pd
 import ast
+import re
 import os
 class Res_atom_select():
     def __init__(self, xyz_file, top_file, plumed_input_file, plumed_output_file, plumed_cal_freq):
@@ -251,7 +252,7 @@ class Res_atom_select():
         return lambdas_df
 
     def aly_traj_get_best_rest(self, lambda_group, fake_state_xml, first_state_csv, nsteps, timestep, opt_cost_name=None, if_mean=False, if_init_pose=False):
-        '''After preliminary MD, analyze the output file of plumed, and obtain the optimal constraint atom group and corresponding constraint parameters based on the RED formula. And output the internal energy difference between the free state and the next constrained state and return a class includes all the information needed for the harmonic restints addition during the alchemical transformation MD.
+        '''After preliminary MD, analyze the output file of plumed, and obtain the optimal restraint atom group and corresponding restraint parameters based on the RED formula. And output the internal energy difference between the free state and the next constrained state and return a class includes all the information needed for the harmonic restints addition during the alchemical transformation MD.
 
         Parameters
         ----------
@@ -318,7 +319,7 @@ class Res_atom_select():
         res_parm_format = RestraintParam(rec_atoms=res_parm.rec_atoms,lig_atoms=res_parm.lig_atoms,r=res_parm.r,theta1=res_parm.theta1,theta2=res_parm.theta2,phi1=res_parm.phi1,phi2=res_parm.phi2,phi3=res_parm.phi3)
         
         output_dU = best.delta_u
-        self.gen_mbarlike_resene_csv(output_dU, lambda_group, nsteps, timestep, self.plumed_cal_freq, first_state_csv)
+        #self.gen_mbarlike_resene_csv(output_dU, lambda_group, nsteps, timestep, self.plumed_cal_freq, first_state_csv)
 
         res.generate_csv(csv_name="res_databystd.csv", lst=res.res_list_4_std_sort)
         best.draw_figure('best.png')
@@ -329,32 +330,78 @@ class Res_atom_select():
             with open(fake_state_xml, 'w') as fake_state_xml_file:
                 fake_state_xml_file.write('This is a fake first lambda state xml file.')
         return res_parm_format
-    def read_restraint_group(self,filename="restraint-atoms-group"):
-        """
-        Read the restraint atom list file customized by the user.  
-        :param filename: Name of the file containing the restraint group.
-        :return: The first list from the file, or None if file doesn't exist or is invalid.
-        """
-        if os.path.exists(filename):
-            try:
-                with open(filename, 'r') as file:
-                    content = file.read().strip()
-                     # Use ast.literal_eval to safely evaluate the string as a Python expression
-                    data = ast.literal_eval(content)
-                    result=[]
-                    if isinstance(data, list) and len(data) > 0 and isinstance(data[0], list):
+    def defi_rest_atoms(self,plumed_input_file):
+        '''plumed_input_input:the plumed input file, which will be readed by this function;default:plumed.dat.
+        r_0: DISTANCE ATOMS=lig1, rec1
+        thetaA_0: ANGLE ATOMS=lig1, rec1, rec2
+        thetaB_0: ANGLE ATOMS=lig2, lig1, rec1
+        phiA_0: TORSION ATOMS=rec3, rec2, rec1, lig1
+        phiB_0: TORSION ATOMS=rec2, rec1, lig1, lig2
+        phiC_0: TORSION ATOMS=rec1, lig1, lig2, lig3
+        PRINT ARG=r_0,thetaA_0,thetaB_0,phiA_0,phiB_0,phiC_0, FILE=plumed_output_file STRIDE=output_frq
+        FLUSH STRIDE=output_frq
+        '''
+       
+        atom_list = []
+        res=[]
+        lig=[]
+        
+        with open(plumed_input_file, 'r') as file:
+            lines = file.readlines()
+            filtered_lines = lines[:-2] 
+            
+            for line in filtered_lines:
+                                
+                if 'thetaA_0' in line:   
+                    parts = line.split('=')   
+                    if len(parts) > 1:
+                        atoms_part = parts[1]
+                        atoms = [atom.strip() for atom in atoms_part.split(',')]
+                        atoms = atoms[1:]
+                        #print(atoms)
+                        res = [int(num) for num in atoms]
+                        #print(res)
+                        #atom_list.append(atoms)
+                        #print(atom_list)
+            #for line in file:
+                if 'phiA_0' in line:   
+                    parts = line.split('=')   
+                    if len(parts) > 1:
+                        atoms_part = parts[1]
+                        atoms = [atom.strip() for atom in atoms_part.split(',')]
+                        atoms = [int(num) for num in atoms]
+                        res.append(atoms[0])
+                        #print(res)
+                        #atom_list.append(atom.strip() for atom in atoms)
+                if 'phiC_0' in line:
+
+                    
+                    parts = line.split('=')
+                    if len(parts) > 1:
+                        atoms_part = parts[1]
+                        atoms = [atom.strip() for atom in atoms_part.split(',')]
+                        atoms = atoms[1:]
+                      
+                        atoms = [int(num) for num in atoms]
                        
-                        result.append(data[0])
-                        return result
-                        
-                    else:
-                        print(f"Warning: Invalid format in {filename}. Expected a list of lists.")
-            except Exception as e:
-                print(f"Error reading {filename}: {str(e)}")
-        else:
-            print(f"Warning: {filename} not found. Using default restraint group.")
-    
-        return None
+                        lig=atoms
+                        #print(lig)
+                        #atoms = match.group(1).split(',')
+                        #atom_list.append(atom.strip() for atom in atoms)
+        #with open(plumed_input_file, 'r') as file:         
+          
+ 
+
+
+
+        six_atoms=[]
+        atom_list=lig+res
+        
+        six_atoms.append(atom_list)
+        print(six_atoms)
+        six_atoms = [list(i) for i in set(tuple(h) for h in six_atoms)]
+      
+        self.muti_six_atm_lst = six_atoms
 
 if __name__ == '__main__':
     #amber
