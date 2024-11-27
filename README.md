@@ -7,11 +7,22 @@ The following is a detailed explanation of the relevant files for optimizing the
 - Preparation of Input Files
 ```sh
 By default, the plumed input file is plumed.dat.
-This file contains the indices of the atoms involved in forming the six restrained degrees of freedom for the system, including one distance, two angles, and three dihedral angles.
-
-The plumed output file is Colvar.
- This file contains numerical records of the distances, angles, and dihedral parameters of the restraint atoms.
 ```
+```sh
+r_0: DISTANCE ATOMS=3358,660
+thetaA_0: ANGLE ATOMS=3358,660,667
+thetaB_0: ANGLE ATOMS=3357,3358,660
+phiA_0: TORSION ATOMS=669,667,660,3358
+phiB_0: TORSION ATOMS=667,660,3358,3357
+phiC_0: TORSION ATOMS=660,3358,3357,3355
+PRINT ARG=r_0,thetaA_0,thetaB_0,phiA_0,phiB_0,phiC_0, FILE=Colvar STRIDE=100
+FLUSH STRIDE=100
+
+This file contains the indices of the atoms involved in forming the six restrained degrees of freedom for the system, including one distance(r_0), two angles(thetaA_0, thetaB_0), and three dihedral angles(phiA_0,phiB_0,phiC_0).The output file is Colvar
+```
+The plumed output file is Colvar.
+This file contains numerical records of the distances, angles, and dihedral parameters of the restraint atoms.
+
 - Output of the Restrained Scheme
 ```sh
 After optimization, a file named res_databystd.csv will be generated.
