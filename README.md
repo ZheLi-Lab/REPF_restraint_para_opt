@@ -36,7 +36,7 @@ conda install openmmtools plumed openmm-plumed tqdm -c conda-forge
 pip install numpy==1.22.4
 pip install pandas==1.4.4
 pip install matplotlib==3.6.0
-pip install scipy==1.9.1
+
 ```
 ## The REPF_parameters optimization procedure
 - It was shown in detail in the REPF_Parameters-Optimization.ipynb
