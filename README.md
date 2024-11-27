@@ -6,9 +6,8 @@ The following is a detailed explanation of the relevant files for optimizing the
 
 - Preparation of Input Files
 ```sh
-By default, the plumed input file is plumed.dat.
-```
-```sh
+By default, the plumed input file is plumed.dat. The following is an example and explanation of the plumed.dat file.
+
 r_0: DISTANCE ATOMS=3358,660
 thetaA_0: ANGLE ATOMS=3358,660,667
 thetaB_0: ANGLE ATOMS=3357,3358,660
